@@ -20,6 +20,8 @@ node {
     }
     
     stage('Deliver') {
+        sh 'pwd'
+        sh 'ls'
         if (currentBuild.result == 'SUCCESS') {
             sh './jenkins/scripts/deliver.sh'
         }
