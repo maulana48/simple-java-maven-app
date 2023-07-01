@@ -30,7 +30,7 @@ node {
         withAWS(region: 'us-east-1', credentials: 'maulana48') {
             sh 'pwd'
             sh 'ls -la'
-            sh 'chmod 600 ./test.pem'
+            sh 'chmod 600 ./test-key.pem'
             sh 'ssh -o "StrictHostKeyChecking no" -i ./test-key.pem test@18.142.179.80 \
             "ls -la" \
             "git pull https://github.com/maulana48/simple-java-maven-app.git" \
