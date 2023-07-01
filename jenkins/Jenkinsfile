@@ -1,4 +1,15 @@
 node {
+    stage('Cleanup Workspace') {
+        cleanWs()
+    }
+    stage('Checkout') {
+        steps {
+            checkout([$class: 'GitSCM', 
+                branches: [[name: '*/master']],
+                userRemoteConfigs: [[url: '/home/Documents/simple-java-maven-app']]], 
+                clean: true)
+        }
+    }
     stage('Deploy') {
         withAWS(region: 'us-east-1', credentials: 'maulana48') {
             sh 'pwd'
