@@ -1,12 +1,29 @@
-FROM jenkins/jenkins:2.346.1-jdk11
-USER root
-RUN apt-get update && apt-get install -y lsb-release
-RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
-  https://download.docker.com/linux/debian/gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) \
-  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
-  https://download.docker.com/linux/debian \
-  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-RUN apt-get update && apt-get install -y docker-ce-cli
-USER jenkins
-RUN jenkins-plugin-cli --plugins "blueocean:1.25.5 docker-workflow:1.28"
+# Base image with Maven 3.9.0 and Java 17
+FROM maven:3.9.0-amazoncorretto-17 AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the pom.xml file to the container
+COPY pom.xml .
+
+# Download the project dependencies
+RUN mvn dependency:go-offline
+
+# Copy the source code to the container
+COPY src ./src
+
+# Build the application
+RUN mvn package
+
+# Final image with only the built application
+FROM openjdk:17-ea-oracle
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/my-app-1.0-SNAPSHOT.jar .
+
+# Set the command to run the application
+CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
