@@ -31,12 +31,12 @@ node {
             sh 'pwd'
             sh 'ls -la'
             sh 'chmod 600 ./test-key.pem'
-            sh 'ssh -o "StrictHostKeyChecking no" -i ./test-key.pem test@18.142.179.80 \
-            "ls -la" \
-            "git pull https://github.com/maulana48/simple-java-maven-app.git" \
-            "cd ./simple-java-maven-app" \
-            "docker build -t test ." \
-            "ddocker run -p 8080:8080 test"'
+            sh 'ssh -o "StrictHostKeyChecking no" -i ./test-key.pem test@18.142.179.80'
+            sh 'ls -la'
+            sh 'git pull https://github.com/maulana48/simple-java-maven-app.git'
+            sh 'cd ./simple-java-maven-app'
+            sh 'docker build -t test .'
+            sh 'docker run -p 8080:8080 test'
         }
     }
 }
