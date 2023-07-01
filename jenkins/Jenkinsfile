@@ -31,7 +31,7 @@ node {
             sh 'ls'
             sh 'ls ./jenkins'
             sh 'cat ./test.pem'
-            sh 'ssh -i ./test.pem arn:aws:iam::219999861198:user/maulana48@18.142.179.80 "sudo ./jenkins/scripts/deliver.sh"'
+            sh 'ssh -o "StrictHostKeyChecking no" -i ./test.pem arn:aws:iam::219999861198:user/maulana48@18.142.179.80 "sudo ./jenkins/scripts/deliver.sh"'
         }
     }
 }
