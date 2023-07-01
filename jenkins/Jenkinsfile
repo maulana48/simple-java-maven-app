@@ -29,9 +29,7 @@ node {
         withAWS(region: 'us-east-1', credentials: 'maulana48') {
             sh 'pwd'
             sh 'ls -la'
-            sh 'sudo ls -la'
-            sh 'cat ./test.pem'
-            sh 'ssh -o "StrictHostKeyChecking no" -i ./test.pem arn:aws:iam::219999861198:user/maulana48@18.142.179.80 "sudo ./jenkins/scripts/deliver.sh"'
+            sh 'ssh -o "StrictHostKeyChecking no" -i ./test.pem test@18.142.179.80 "./jenkins/scripts/deliver.sh"'
         }
     }
 }
