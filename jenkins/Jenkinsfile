@@ -1,9 +1,6 @@
 node {
+    checkout scm
     stage('Build') {
-        checkout([$class: 'GitSCM', 
-                branches: [[name: '*/master']],
-                userRemoteConfigs: [[url: '/home/Documents/simple-java-maven-app']]], 
-                clean: true)
         docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
             sh 'mvn -B -DskipTests clean package'
         }
