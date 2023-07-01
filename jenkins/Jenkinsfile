@@ -1,4 +1,7 @@
 node {
+    stage('Cleanup Workspace') {
+        cleanWs()
+    }
     stage('Deploy') {
         withAWS(region: 'us-east-1', credentials: 'maulana48') {
             sh 'pwd'
