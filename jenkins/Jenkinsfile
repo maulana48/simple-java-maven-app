@@ -6,9 +6,11 @@ pipeline {
         }
     }
     stages {
-        stage('Checkout') {
+        stage('Initialize') {
             steps {
                 checkout scm
+                def dockerHome = tool 'docker-latest'
+                env.PATH = "${dockerHome}/bin:${env.PATH}"
             }
         }
         
