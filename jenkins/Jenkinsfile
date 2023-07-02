@@ -1,42 +1,57 @@
-node {
-    checkout scm
-    stage('Build') {
-        docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
-            sh 'mvn -B -DskipTests clean package'
+pipeline {
+    agent {
+        docker {
+            image 'maven:3-alpine'
+            args '-v /root/.m2:/root/.m2'
         }
     }
-    
-    stage('Test') {
-        docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
-            sh 'mvn test'
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
         
-        if (currentBuild.result == 'SUCCESS') {
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
                 }
             }
         }
-    }
-    
-    stage('Deliver') {
-        docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
-            sh './jenkins/scripts/deliver.sh'
+        
+        stage('Deliver') {
+            steps {
+                sh './jenkins/scripts/deliver.sh'
+            }
         }
-    }
-    
-    stage('Deploy') {
-        withAWS(region: 'us-east-1', credentials: 'maulana48') {
-            sh 'pwd'
-            sh 'ls -la'
-            sh 'chmod 600 ./test-key.pem'
-            sh 'ssh -o "StrictHostKeyChecking no" -i ./test-key.pem test@18.142.179.80'
-            sh 'ls -la'
-            sh 'git pull https://github.com/maulana48/simple-java-maven-app.git'
-            sh 'cd ./simple-java-maven-app'
-            sh 'docker build -t test .'
-            sh 'docker run -p 8080:8080 test'
+        stage('Build Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                    sh 'docker build -t maulana48/simple-java-maven-app .'
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh 'docker push maulana48/simple-java-maven-app'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    def dockerCmd = 'docker run  -p 8080:8080 -d maulana48/simple-java-maven-app:latest'
+                    sshagent(['maulana48-ec2']) {
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 ${dockerCmd}"
+                    }
+                }
+            }
         }
     }
 }
