@@ -54,16 +54,16 @@ pipeline {
         stage('Build Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh '/usr/bin/docker build -t maulana48/simple-java-maven-app .'
-                    sh "echo $PASS | /usr/bin/docker login -u $USER --password-stdin"
-                    sh '/usr/bin/docker push maulana48/simple-java-maven-app'
+                    sh 'docker build -t maulana48/simple-java-maven-app .'
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh 'docker push maulana48/simple-java-maven-app'
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    def dockerCmd = '/usr/bin/docker run  -p 8080:8080 -d maulana48/simple-java-maven-app:latest'
+                    def dockerCmd = 'docker run  -p 8080:8080 --name test -d maulana48/simple-java-maven-app:latest'
                     sshagent(['maulana48-ec2']) {
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 ${dockerCmd}"
                     }
