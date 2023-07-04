@@ -28,4 +28,5 @@ COPY --from=build /app/target/my-app-1.0-SNAPSHOT.jar .
 # Set the command to run the application
 CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
 
-CMD ["sleep", "10000"]
+# Halt app after execution
+CMD ["tail", "-f", "/dev/null"]
