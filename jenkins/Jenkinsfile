@@ -60,7 +60,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Manual Approval') {
             steps {
       		    // Create an Approval Button with a timeout of 15minutes.
                 timeout(time: 2, unit: "MINUTES") {
