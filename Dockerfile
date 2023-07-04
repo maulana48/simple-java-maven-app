@@ -26,6 +26,4 @@ WORKDIR /app
 COPY --from=build /app/target/my-app-1.0-SNAPSHOT.jar .
 
 # Set the command to run the application
-CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
-
-CMD ["while true;", "do sleep 1000;", "done"]
+CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar", "&&", "sleep infinity"]
