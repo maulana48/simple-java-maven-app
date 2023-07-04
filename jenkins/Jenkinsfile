@@ -68,6 +68,7 @@ pipeline {
 	            }
                 		
 	            echo "Initiating deployment"
+            }
         }
         stage('Deploy') {
             steps {
