@@ -77,7 +77,9 @@ pipeline {
                     sshagent(['maulana48-ec2']) {
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 ${dockerCmd}"
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 /usr/bin/docker exec test java -jar my-app-1.0-SNAPSHOT.jar"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 sleep 2s; /usr/bin/docker stop test; /usr/bin/docker rm test"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 sleep 2s"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 /usr/bin/docker stop test"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.142.179.80 /usr/bin/docker rm test"
                     }
                 }
             }
